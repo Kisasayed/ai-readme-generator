@@ -6,6 +6,7 @@ target/
 
 .idea/
 *.iml
+target/
 
 ### STS ###
 .apt_generated
