@@ -10,3 +10,26 @@ public class AppConfig {
         return new RestTemplate();
     }
 }
+private List<String> findDependencyFiles(List<String> allFilePaths) {
+    String language = detectLanguage(allFilePaths);
+
+    Map<String, List<String>> dependencyFilesByLanguage = Map.of(
+            "java",   List.of("pom.xml", "build.gradle"),
+            "js",     List.of("package.json"),
+            "py",     List.of("requirements.txt")
+    );
+
+    List<String> knownDependencyFiles = dependencyFilesByLanguage.getOrDefault(
+            language, List.of()
+    );
+
+    List<String> matches = new ArrayList<>();
+    for (String path : allFilePaths) {
+        for (String knownFile : knownDependencyFiles) {
+            if (path.endsWith(knownFile)) {
+                matches.add(path);
+            }
+        }
+    }
+    return matches;
+}
