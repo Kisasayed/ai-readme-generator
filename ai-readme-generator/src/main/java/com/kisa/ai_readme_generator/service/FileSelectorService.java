@@ -77,7 +77,25 @@ public class FileSelectorService {
         return null;
     }
 
-    private List<String> findLargestSourceFiles(List<Map<String, Object>> allFiles) {
-        return null; // not built yet
+    private List<String> findLargestSourceFiles(List<Map<String, Object>> allFiles, int count) {
+        List<Map<String, Object>> onlyFiles = new ArrayList<>();
+
+        for (Map<String, Object> file : allFiles) {
+            if ("blob".equals(file.get("type"))) {
+                onlyFiles.add(file);
+            }
+        }
+
+        onlyFiles.sort((a, b) -> {
+            int sizeA = (int) a.get("size");
+            int sizeB = (int) b.get("size");
+            return sizeB - sizeA;
+        });
+
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < count && i < onlyFiles.size(); i++) {
+            result.add((String) onlyFiles.get(i).get("path"));
+        }
+        return result;
     }
 }
