@@ -6,11 +6,6 @@ import java.util.*;
 @Service
 public class FileSelectorService {
 
-    public List<String> selectImportantFiles(List<Map<String, Object>> allFiles) {
-        // will call the helper methods below - not built yet
-        return null;
-    }
-
     private String getExtension(String path) {
         int lastDot = path.lastIndexOf('.');
         if (lastDot == -1) return null;
@@ -97,5 +92,30 @@ public class FileSelectorService {
             result.add((String) onlyFiles.get(i).get("path"));
         }
         return result;
+    }
+    public List<String> selectImportantFiles(List<Map<String, Object>> allFiles) {
+        List<String> selected = new ArrayList<>();
+
+        List<String> dependencyFiles = findDependencyFiles(allFiles);
+        selected.addAll(dependencyFiles);
+
+        String entryPoint = findEntryPoint(allFiles);
+        if (entryPoint != null) {
+            selected.add(entryPoint);
+        }
+
+        String readme = findReadme(allFiles);
+        if (readme != null) {
+            selected.add(readme);
+        }
+
+        List<String> largestFiles = findLargestSourceFiles(allFiles, 3);
+        for (String path : largestFiles) {
+            if (!selected.contains(path)) {
+                selected.add(path);
+            }
+        }
+
+        return selected;
     }
 }
